@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Weather Dashboard Station</title>
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #e67e22 0%, #f39c12 100%);
+            --card-bg: rgba(255, 255, 255, 0.15);
+            --card-border: rgba(255, 255, 255, 0.25);
+            --text-main: #ffffff;
+            --text-sub: #fff3e0;
+            --accent: #fff3e0;
+            --shadow: rgba(139, 50, 0, 0.3);
+            --base-font-size: 14px;
+        }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg-gradient); color: var(--text-main); margin: 0; padding: 15px; min-height: 100vh; display: flex; flex-direction: column; align-items: center; box-sizing: border-box; font-size: var(--base-font-size); transition: all 0.4s ease; }
+        .container { width: 100%; max-width: 480px; }
+        h1 { text-align: center; font-size: 1.8em; font-weight: 800; margin-bottom: 20px; text-shadow: 0 2px 4px var(--shadow); }
+        
+        /* Glassmorphic Base Modules */
+        .glass-card { background: var(--card-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid var(--card-border); padding: 20px; border-radius: 24px; box-shadow: 0 12px 40px var(--shadow); margin-top: 15px; }
+        .location-header { font-size: 1.4em; font-weight: 800; margin-bottom: 15px; text-align: center; }
+        
+        /* Custom Controls Panel Layout */
+        .control-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; gap: 8px; }
+        .control-row:last-child { margin-bottom: 0; }
+        label { font-size: 0.9em; font-weight: 600; color: var(--text-sub); }
+        select, button.ctrl-btn { padding: 10px 14px; border-radius: 12px; border: 1px solid var(--card-border); background: rgba(0,0,0,0.15); color: #fff; font-size: 0.9em; font-weight: bold; outline: none; }
+        select option { background: #222; color: #fff; }
+        button.ctrl-btn { width: auto; flex: 1; cursor: pointer; background: var(--text-main); color: #121212; box-shadow: 0 4px 12px var(--shadow); border: none; }
+        
+        /* Data Presentation Row Structures */
+        .forecast-row { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.15); }
+        .forecast-row:last-child { border-bottom: none; }
+        .main-meta { max-width: 58%; }
+        .period-title { font-weight: 700; font-size: 1.1em; color: var(--accent); }
+        .condition-summary { font-size: 0.9em; color: var(--text-sub); margin-top: 4px; line-height: 1.4; }
+        .side-metrics { text-align: right; min-width: 38%; }
+        .primary-temp { font-size: 1.7em; font-weight: 800; }
+        .sub-metrics-grid { font-size: 0.8em; color: var(--text-sub); margin-top: 4px; line-height: 1.4; }
+        
+        /* Custom Analytics Metrics Board */
+        .analytics-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 10px; }
+        .metric-box { background: rgba(0,0,0,0.1); border-radius: 14px; padding: 12px; text-align: center; border: 1px solid rgba(255,255,255,0.05); }
+        .metric-val { font-size: 1.3em; font-weight: 800; color: var(--accent); margin-top: 2px; }
+        
+        .radar-box-frame { width: 100%; height: 320px; border-radius: 16px; margin-top: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); border: none; background: #000; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Personal Forecast Station</h1>
+    
+    <!-- Customization Panel Module -->
+    <div class="glass-card" style="padding: 15px;">
+        <div class="control-row">
+            <label for="themeSelect">Station Theme Matrix:</label>
+            <select id="themeSelect" onchange="applyCustomTheme(this.value)">
+                <option value="amber">Sunset Amber (Default)</option>
+                <option value="midnight">Deep Midnight Shift</option>
+                <option value="emerald">Storm Watch Emerald</option>
+                <option value="cyber">Cyberpunk Matrix</option>
+            </select>
+        </div>
+        <div class="control-row">
+            <label for="sizeSelect">Layout UI Text Scaling:</label>
+            <select id="sizeSelect" onchange="adjustTextScale(this.value)">
+                <option value="13px">Compact Layout</option>
+                <option value="15px" selected>Standard Mobile</option>
+                <option value="17px">High Visibility</option>
+            </select>
+        </div>
+        <div class="control-row" style="margin-top: 5px;">
+            <button class="ctrl-btn" onclick="toggleRadarMode()">Toggle Radar: Satellite / Winds Map</button>
+        </div>
+    </div>
+
+    <!-- Active Map Tracking Module Frame -->
+    <div class="glass-card" style="padding: 15px;">
+        <div id="radarTitle" style="font-size:14px; font-weight:700; margin-bottom:8px; text-align: center;">Live Regional Satellite Tracking</div>
+        <iframe id="radarFrame" class="radar-box-frame" src="https://noaa.gov"></iframe>
+    </div>
+
+    <!-- Meteorological Metrics Board -->
+    <div class="glass-card">
+        <div class="location-header">Sumter County, SC</div>
+        <div id="forecastContainer">
+            <div class="forecast-row">
+                <div class="main-meta">
+                    <div class="period-title">This Afternoon</div>
+                    <div class="condition-summary">Mostly sunny and warm with clear clearing horizons across the coastal plain.</div>
+                </div>
+                <div class="side-metrics">
+                    <div class="primary-temp">84°F</div>
+                    <div class="sub-metrics-grid">
+                        <div>Dew Pt: <b>62°F</b></div>
+                        <div>Humid: <b>48%</b></div>
+                        <div>Baro: <b>29.92 inHg</b></div>
+                    </div>
+                </div>
+            </div>
+            <div class="forecast-row">
+                <div class="main-meta">
+                    <div class="period-title">Tonight</div>
+                    <div class="condition-summary">Mainly clear skies with calm, stable wind patterns developing after midnight.</div>
+                </div>
+                <div class="side-metrics">
+                    <div class="primary-temp">64°F</div>
+                    <div class="sub-metrics-grid">
+                        <div>Wind: <b>CALM</b></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Micro-Climate Analytics Station Panel -->
+    <div class="glass-card">
+        <div style="font-size:1.1em; font-weight:700; text-align:center; margin-bottom:10px;">Micro-Climate Station Analytics</div>
+        <div class="analytics-grid">
+            <div class="metric-box">
+                <label>UV Index Profile</label>
+                <div class="metric-val" style="color: #ffeb3b;">1.2 Low</div>
+            </div>
+            <div class="metric-box">
+                <label>Rain Accumulation</label>
+                <div class="metric-val">0.00 in</div>
+            </div>
+            <div class="metric-box">
+                <label>Visibility Range</label>
+                <div class="metric-val">10.0 mi</div>
+            </div>
+            <div class="metric-box">
+                <label>Comfort Threshold</label>
+                <div class="metric-val">Pleasant</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let currentRadarMode = "satellite";
+
+function adjustTextScale(val) {
+    document.documentElement.style.setProperty('--base-font-size', val);
+}
+
+function toggleRadarMode() {
+    const frame = document.getElementById('radarFrame');
+    const title = document.getElementById('radarTitle');
+    
+    if(currentRadarMode === "satellite") {
+        currentRadarMode = "winds";
+        title.innerText = "Global Atmospheric Wind Matrix";
+        // Free fallback vector map embed that allows local container loops without error codes
+        frame.src = "https://nullschool.net";
+    } else {
+        currentRadarMode = "satellite";
+        title.innerText = "Live Regional Satellite Tracking";
+        frame.src = "https://noaa.gov";
+    }
+}
+
+function applyCustomTheme(theme) {
+    let bg, accent, cardBg, textMain, textSub, shadow;
+    
+    if (theme === 'amber') {
+        bg = "linear-gradient(135deg, #e67e22 0%, #f39c12 100%)"; accent = "#fff3e0"; cardBg = "rgba(255, 255, 255, 0.15)"; textMain = "#ffffff"; textSub = "#fff3e0"; shadow = "rgba(139, 50, 0, 0.3)";
+    } else if (theme === 'midnight') {
+        bg = "linear-gradient(135deg, #0f172a 0%, #020617 100%)"; accent = "#38bdf8"; cardBg = "rgba(255, 255, 255, 0.05)"; textMain = "#f8fafc"; textSub = "#94a3b8"; shadow = "rgba(0, 0, 0, 0.5)";
+    } else if (theme === 'emerald') {
+        bg = "linear-gradient(135deg, #115e59 0%, #042f2e 100%)"; accent = "#2dd4bf"; cardBg = "rgba(255, 255, 255, 0.07)"; textMain = "#ccfbf1"; textSub = "#99f6e4"; shadow = "rgba(2, 44, 34, 0.4)";
+    } else if (theme === 'cyber') {
+        bg = "linear-gradient(135deg, #1a0033 0%, #000000 100%)"; accent = "#39ff14"; cardBg = "rgba(255, 0, 128, 0.05)"; textMain = "#39ff14"; textSub = "#ff007f"; shadow = "rgba(255, 0, 128, 0.2)";
+    }
+    
+    document.documentElement.style.setProperty('--bg-gradient', bg);
+    document.documentElement.style.setProperty('--accent', accent);
+    document.documentElement.style.setProperty('--card-bg', cardBg);
+    document.documentElement.style.setProperty('--text-main', textMain); 
+
+document.documentElement.style.setProperty('--text-sub', textSub);document.documentElement.style.setProperty('--shadow', shadow);document.body.style.background = bg;document.body.style.color = textMain;}
