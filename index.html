@@ -43,10 +43,10 @@
         
         .forecast-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.15); }
         .forecast-row:last-child { border-bottom: none; }
-        .main-meta { max-width: 52%; }
+        .main-meta { max-width: 55%; }
         .period-title { font-weight: 700; font-size: 1.05em; color: var(--accent); }
         .condition-summary { font-size: 0.85em; color: var(--text-sub); margin-top: 4px; line-height: 1.3; }
-        .side-metrics { text-align: right; min-width: 45%; font-size: 0.85em; }
+        .side-metrics { text-align: right; min-width: 42%; font-size: 0.85em; }
         .primary-temp { font-size: 2.1em; font-weight: 800; color: #fff; line-height: 1.1; }
         
         .weather-table { width: 100%; border-collapse: collapse; margin-top: 5px; font-size: 0.85em; text-align: left; }
@@ -67,17 +67,17 @@
     <div id="alertBox" class="alert-banner">
         <div class="alert-icon">⚠️</div>
         <div class="alert-text">
-            <span id="alertTitle">CONVECTIVE TRACKING ONLINE</span><br>
-            <span id="alertDesc" style="font-weight:normal; font-size:0.9em;">Core systems online. Live coordinate geocoding actively processing regional cells.</span>
+            <span id="alertTitle">COMMAND MATRIX OPERATIONAL</span><br>
+            <span id="alertDesc" style="font-weight:normal; font-size:0.9em;">Multi-node layout online. Unrestricted address tracking matrices actively operational.</span>
         </div>
     </div>
 
     <div style="display: flex; flex-direction: column; align-items: center; margin-bottom: 12px; gap: 6px; width: 100%;">
         <div style="background: var(--card-bg); border: 1px solid var(--card-border); padding: 8px 16px; border-radius: 40px; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
             <span style="width: 8px; height: 8px; background: #22c55e; border-radius: 50%; display: inline-block; animation: beaconPulse 1.5s infinite;"></span>
-            <span style="font-size: 11px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; color: var(--accent);">NEXRAD LINK ACTIVE</span>
+            <span style="font-size: 11px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; color: var(--accent);">LINK CONNECTIVITY CLEAR</span>
         </div>
-        <div style="font-family: monospace; font-size: 12px; font-weight: bold; background: rgba(0,0,0,0.25); padding: 5px 14px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.05); color: var(--text-main);" id="stationClock">STATION SYNCING...</div>
+        <div style="font-family: monospace; font-size: 12px; font-weight: bold; background: rgba(0,0,0,0.25); padding: 5px 14px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.05); color: var(--text-main);" id="stationClock">STATION LOCKING...</div>
     </div>
 
     <div class="main-menu-nav">
@@ -89,7 +89,7 @@
     <div id="telemetryPanel" class="menu-panel active">
         <div class="glass-card" style="padding: 15px;">
             <div class="address-group">
-                <input type="text" id="addressInput" class="address-bar" placeholder="Type Address (e.g. Sumter, SC)">
+                <input type="text" id="addressInput" class="address-bar" placeholder="Type Address (e.g. Columbia, SC)">
                 <button class="ctrl-btn" style="background:#fff; color:#121212;" onclick="geocodeAddressSearch()">Geocode Address & Sync</button>
                 <div id="stationStatus" style="text-align:center; font-size:0.85em; font-weight:bold; margin-top:5px; color:var(--text-sub);">Ready for deployment.</div>
             </div>
@@ -110,6 +110,8 @@
             <div style="margin-top: 10px;"><button class="ctrl-btn" style="background:rgba(0,0,0,0.18); color:#fff;" onclick="toggleRadarMode()">Toggle Radar: Doppler / Wind Matrix</button></div>
         </div>
 
+        <!-- REMOVED CELL ATTRIBUTES CARD SECTION COMPLETELY -->
+
         <div class="glass-card">
             <div id="stationHeaderDisplay" class="section-title">Station Profile: Sumter County, SC</div>
             <div id="forecastContainer">
@@ -121,16 +123,7 @@
                     <div class="side-metrics">
                         <div class="primary-temp">84°F</div>
                         <div style="font-weight: bold; color: var(--accent); font-size: 1.05em; margin-bottom: 7px; margin-top: 1px;">Feels Like: <span id="feelsLikeNode" style="background:rgba(0,0,0,0.15); padding:2px 6px; border-radius:6px; color:#fff;">87°F</span></div>
-                        
-                        <!-- EMBEDDED ATTRIBUTES SYSTEM DIRECTLY IN THE METRICS AREA -->
-                        <div style="border-top: 1px dashed rgba(255,255,255,0.15); margin-top: 6px; padding-top: 6px; font-family: monospace; font-size: 11px; text-align: left; line-height: 1.5; color: var(--text-sub);">
-                            <div style="font-weight:bold; color:#ef4444; margin-bottom:3px; text-align:center;">CELL ATTRIBUTES</div>
-                            <div style="display:flex; justify-content:space-between;"><span>Max Reflectivity:</span><b style="color:#ef4444;">53.0 dBZ</b></div>
-                            <div style="display:flex; justify-content:space-between;"><span>Cell Structure Top:</span><b>24.9 KFT</b></div>
-                            <div style="display:flex; justify-content:space-between;"><span>Hail Probability:</span><b style="color:#fbbf24;">20% (0.50")</b></div>
-                        </div>
-                        
-                        <div class="sub-metrics-grid" style="border-top: 1px solid rgba(255,255,255,0.08); margin-top: 6px; padding-top: 6px;">
+                        <div class="sub-metrics-grid">
                             <div>Dew Pt: <b>62°F</b></div><div>Humid: <b>48%</b></div><div>Baro: <b>29.92 inHg</b></div>
                         </div>
                     </div>
@@ -147,11 +140,11 @@
             <div class="section-title">Station Event & Telemetry Logs</div>
             <div style="background: rgba(0,0,0,0.3); border-radius: 14px; padding: 12px; font-family: monospace; font-size: 11px; line-height: 1.4; color: var(--accent); border: 1px solid rgba(255,255,255,0.05); max-height: 100px; overflow-y: auto;" id="stationEventLogs">
                 <div>[SYSTEM] Station boot sequence executed successfully.</div>
-                <div>[TELEMETRY] Embedded satellite frames verified safely.</div>
+                <div>[TELEMETRY] Unrestricted geocoding arrays active.</div>
             </div>
         </div>
     </div>
-    <!-- PANEL 2: MODEL TERMINAL RUNS -->
+<!-- PANEL 2: MODEL TERMINAL RUNS -->
     <div id="modelsPanel" class="menu-panel">
         <div class="glass-card">
             <div class="section-title">Supercomputer Model Outputs</div>
@@ -170,7 +163,7 @@
     </div>
 </div>
 
-<!-- STANDALONE STATION HEALTH MATRIX CONTAINER -->
+<!-- SYSTEM DIAGNOSTICS APPRENDIX CONTAINER -->
 <div class="container" style="margin-top: 15px; margin-bottom: 25px;">
     <div class="glass-card" style="border: 1px dashed rgba(255,255,255,0.25); background: rgba(0,0,0,0.15);">
         <div class="section-title" style="letter-spacing: 1px; font-size: 0.95em; color: var(--accent);">📊 STATION INSTRUMENTATION DIAGNOSTICS</div>
@@ -221,20 +214,24 @@ function switchSubModelTab(evt, subId) {
 function geocodeAddressSearch() {
     const query = document.getElementById('addressInput').value;
     if (!query) { setStatus("Error: Field cannot run empty."); return; }
-    setStatus("Contacting Geocoding Nodes...");
-    pushTelemetryLog(`Searching geocoding matrices for: "${query}"`);
-    fetch(`https://openstreetmap.org{encodeURIComponent(query)}&limit=1`)
+    setStatus("Contacting Backup Geocoding Infrastructure...");
+    pushTelemetryLog(`Synchronizing search vectors for: "${query}"`);
+    
+    fetch(`https://maps.co{encodeURIComponent(query)}`)
         .then(res => res.json())
         .then(data => {
             if (data && data.length > 0) {
-                activeLat = parseFloat(data.lat); activeLon = parseFloat(data.lon);
-                document.getElementById('stationHeaderDisplay').innerText = `Station Profile: ${data.display_name.split(',').slice(0,2).join(',')}`;
-                setStatus("Location verified successfully."); pushTelemetryLog(`Coordinates resolved.`); syncRadarFrameDisplay();
+                activeLat = parseFloat(data[0].lat); 
+                activeLon = parseFloat(data[0].lon);
+                const nameParts = data[0].display_name.split(',');
+                document.getElementById('stationHeaderDisplay').innerText = `Station Profile: ${nameParts[0]}, ${nameParts[1] || ''}`;
+                setStatus("Location verified successfully."); 
+                pushTelemetryLog(`Coordinates resolved: ${activeLat.toFixed(2)}, ${activeLon.toFixed(2)}`); 
+                syncRadarFrameDisplay();
             } else { throw new Error(); }
         }).catch(() => { setStatus("Lookup failed. Check spelling."); });
 }
 
-// FIXED PERMISSIONS LAYERS WRITTEN SECURELY TO UNLOCK RADAR STREAM
 function syncRadarFrameDisplay() {
     const container = document.getElementById('radarContainer');
     if (!container) return;
@@ -247,7 +244,6 @@ function syncRadarFrameDisplay() {
         container.innerHTML = `<iframe class="radar-box-frame" src="https://nullschool.net{fixedLon},${fixedLat},1500" allow="geolocation"></iframe>`;
     } else {
         title.innerText = "Live Regional Doppler Tracking";
-        // Unlocked execution parameters completely so mobile Safari reads the RainViewer layers cleanly
         container.innerHTML = `<iframe class="radar-box-frame" src="https://rainviewer.com{fixedLat},${fixedLon},7&o=1&t=1&m=1&a=1&c=3&o1=1&v=1&g=1&s=1&ee=0" allow="geolocation"></iframe>`;
     }
 }
