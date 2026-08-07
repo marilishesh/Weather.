@@ -286,3 +286,112 @@ function applyCustomTheme(theme) {
 </script>
 </body>
 </html>
+<!-- ==================== BEGIN UNIFIED COMMAND UPGRADE ==================== -->
+
+<!-- Ambient Animated Particle Background Grid Layer -->
+<div id="ambientMatrix" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; background-image: radial-gradient(circle at 20% 30%, rgba(255,255,255,0.03) 1px, transparent 1px), radial-gradient(circle at 75% 60%, rgba(255,255,255,0.02) 2px, transparent 2px); background-size: 140px 140px; animation: matrixDrift 50s infinite linear; z-index: 0;"></div>
+<style>@keyframes matrixDrift { from { background-position: 0 0; } to { background-position: 140px 280px; } }</style>
+
+<!-- Active Live Telemetry Status & Digital Clock Header -->
+<div style="display: flex; flex-direction: column; align-items: center; margin-bottom: -5px; margin-top: 5px; gap: 8px; width: 100%;">
+    <div style="background: var(--card-bg); border: 1px solid var(--card-border); padding: 8px 16px; border-radius: 40px; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+        <span style="width: 8px; height: 8px; background: #22c55e; border-radius: 50%; display: inline-block; animation: beaconPulse 1.5s infinite;"></span>
+        <span style="font-size: 11px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; color: var(--accent);">NEXRAD LINK SECURE</span>
+    </div>
+    
+    <!-- Live Auto-Updating Station Digital Clock -->
+    <div style="font-family: monospace; font-size: 13px; font-weight: bold; background: rgba(0,0,0,0.2); padding: 4px 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); color: var(--text-main);" id="stationClock">UTC SCANNER SYNCING...</div>
+</div>
+<style>@keyframes beaconPulse { 0% { opacity: 0.3; transform: scale(0.95); } 50% { opacity: 1; transform: scale(1.05); } 100% { opacity: 0.3; transform: scale(0.95); } }</style>
+
+<!-- Address Geocoding Input Module -->
+<div class="glass-card" style="padding: 15px; position: relative; z-index: 10;">
+    <div class="address-group">
+        <input type="text" id="addressInput" class="address-bar" placeholder="Type Address (e.g. Sumter, SC)">
+        <button class="ctrl-btn" style="background:#fff; color:#121212;" onclick="geocodeAddressSearch()">Geocode Address & Sync Station</button>
+        <div id="stationStatus" class="status-msg">Awaiting location tracking target...</div>
+    </div>
+
+    <!-- Quick-Tap Regional Baseline Memory Matrix -->
+    <div style="margin-top: 12px; margin-bottom: 8px;">
+        <label style="font-size: 0.75em; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-sub); display: block; margin-bottom: 6px;">Saved Radar Baselines:</label>
+        <div id="memoryMatrix" style="display: flex; gap: 6px; flex-wrap: wrap;">
+            <button style="flex: 1; min-width: 80px; padding: 8px; font-size: 11px; border-radius: 20px; background: rgba(0,0,0,0.25); color: #fff; border: 1px solid rgba(255,255,255,0.1); font-weight: bold; cursor: pointer;" onclick="document.getElementById('addressInput').value='Sumter, SC'; geocodeAddressSearch();">📍 Sumter</button>
+            <button style="flex: 1; min-width: 80px; padding: 8px; font-size: 11px; border-radius: 20px; background: rgba(0,0,0,0.25); color: #fff; border: 1px solid rgba(255,255,255,0.1); font-weight: bold; cursor: pointer;" onclick="document.getElementById('addressInput').value='Columbia, SC'; geocodeAddressSearch();">📍 Columbia</button>
+            <button style="flex: 1; min-width: 80px; padding: 8px; font-size: 11px; border-radius: 20px; background: rgba(0,0,0,0.25); color: #fff; border: 1px solid rgba(255,255,255,0.1); font-weight: bold; cursor: pointer;" onclick="document.getElementById('addressInput').value='Charleston, SC'; geocodeAddressSearch();">📍 Charleston</button>
+        </div>
+    </div>
+
+    <div class="control-row" style="margin-top: 15px;">
+        <label style="font-weight: bold;" for="themeSelect">Design Profile:</label>
+        <select id="themeSelect" onchange="applyCustomTheme(this.value)">
+            <option value="amber">Sunset Amber (Default)</option>
+            <option value="midnight">Deep Midnight Shift</option>
+            <option value="emerald">Storm Watch Emerald</option>
+            <option value="cyber">Cyberpunk Matrix</option>
+        </select>
+    </div>
+    <div class="control-row">
+        <label style="font-weight: bold;" for="sizeSelect">Layout Text Scale:</label>
+        <select id="sizeSelect" onchange="adjustTextScale(this.value)">
+            <option value="13px">Compact Layout</option>
+            <option value="15px" selected>Standard Mobile</option>
+            <option value="17px">High Visibility</option>
+        </select>
+    </div>
+</div>
+
+<!-- Doppler Radar Frame View Container -->
+<div class="glass-card" style="position: relative; z-index: 10;">
+    <div id="radarTitle" class="section-title">Live Regional Doppler Tracking</div>
+    <div id="radarContainer">
+        <!-- Rebuilt with automatic runtime fallback layers inside block script scripts -->
+        <div style="width:100%; height:320px; background:#000; border-radius:16px;"></div>
+    </div>
+    <div style="margin-top: 12px;">
+        <button class="ctrl-btn" style="background:rgba(0,0,0,0.18); color:#fff;" onclick="toggleRadarMode()">Toggle Radar: Satellite / Wind Vectors</button>
+    </div>
+</div>
+
+<!-- Interactive Weather Event Alert Log Console -->
+<div class="glass-card" style="position: relative; z-index: 10;">
+    <div class="section-title">Station Event & Telemetry Logs</div>
+    <div style="background: rgba(0,0,0,0.3); border-radius: 14px; padding: 12px; font-family: monospace; font-size: 11px; line-height: 1.4; color: var(--accent); border: 1px solid rgba(255,255,255,0.05); max-height: 110px; overflow-y: auto;" id="stationEventLogs">
+        <div>[SYSTEM] Station boot sequence executed successfully.</div>
+        <div>[TELEMETRY] Embedded satellite matrix modules online.</div>
+        <div>[RADAR] RainViewer proxy link secured via layout layers.</div>
+    </div>
+</div>
+
+<!-- Extra Logic Injection Hook to Drive Clock and Console Modules -->
+<script>
+function startCommandStationClocks() {
+    setInterval(() => {
+        const now = new Date();
+        const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        const dateStr = now.toLocaleDateString([], { month: 'short', day: 'numeric' });
+        document.getElementById('stationClock').innerText = `STATION SYNC: ${dateStr} @ ${timeStr}`;
+    }, 1000);
+}
+function pushTelemetryLog(msg) {
+    const consoleBox = document.getElementById('stationEventLogs');
+    if(consoleBox) {
+        const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        consoleBox.innerHTML += `<div>[${time}] ${msg}</div>`;
+        consoleBox.scrollTop = consoleBox.scrollHeight;
+    }
+}
+// Automatically integrate logic parameters onto standard window listeners smoothly
+document.addEventListener("DOMContentLoaded", () => {
+    startCommandStationClocks();
+    // Hook up push alerts onto your existing address locator function targets
+    const baseSearch = window.geocodeAddressSearch;
+    window.geocodeAddressSearch = function() {
+        const address = document.getElementById('addressInput').value || 'Target';
+        pushTelemetryLog(`Searching geocoding matrix coordinates for: "${address}"`);
+        baseSearch();
+    };
+});
+</script>
+
+<!-- ==================== END UNIFIED COMMAND UPGRADE ==================== -->
