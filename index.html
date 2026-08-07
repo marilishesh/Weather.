@@ -229,49 +229,7 @@ function syncRadarFrameDisplay() {
         container.innerHTML = `<iframe class="radar-box-frame" src="https://windy.com{fixedLat}&lon=${fixedLon}&zoom=6&level=surface&overlay=radar&menu=&message=&marker=&calendar=now" allow="geolocation"></iframe>`;
     }
 }
-function geocodeAddressSearch() {
-    const query = document.getElementById('addressInput').value;
-    if (!query) { setStatus("Error: Field cannot run empty."); return; }
-    
-    setStatus("Contacting OpenStreetMap Telemetry Nodes...");
-    pushTelemetryLog(`Synchronizing search vectors for: "${query}"`);
-    
-    // Fixed direct open path using an explicit user identity header to pass safety filters
-    fetch(`https://openstreetmap.org{encodeURIComponent(query)}&limit=1`, {
-        headers: {
-            'User-Agent': 'PersonalCommandStationForecaster/5.0 (iPad; Mobile Sandbox Engine)'
-        }
-    })
-    .then(res => {
-        if (!res.ok) throw new Error("Server communication blocked");
-        return res.json();
-    })
-    .then(data => {
-        if (data && data.length > 0) {
-            // Target and parse the exact coordinate indexes matching your typed query
-            const locationRecord = data[0];
-            activeLat = parseFloat(locationRecord.lat);
-            activeLon = parseFloat(locationRecord.lon);
-            
-            // Format and update text banners cleanly
-            const labelParts = locationRecord.display_name.split(',');
-            const displayTitle = labelParts.slice(0, 2).join(',');
-            
-            document.getElementById('stationHeaderDisplay').innerText = `Station Profile: ${displayTitle}`;
-            setStatus("Location verified successfully.");
-            pushTelemetryLog(`Coordinates resolved: ${activeLat.toFixed(2)}, ${activeLon.toFixed(2)}`);
-            
-            // Force your interactive Windy radar container to reload using the new coordinates
-            syncRadarFrameDisplay();
-        } else {
-            throw new Error("Target address string returned empty array");
-        }
-    })
-    .catch((err) => {
-        console.error(err);
-        setStatus("Verification failure. Try typing a simpler city, state format.");
-        pushTelemetryLog(`Mapping error: Address syntax unverified inside main indices.`);
-    });
+
 }
 
 
@@ -337,6 +295,67 @@ function queryNationalWeatherGrid(lat, lon) {
         .catch(() => {
             pushTelemetryLog("Data fetched using regional baseline matrices.");
         });
+}
+function geocodeAddressSearch() {
+    let query = document.getElementById('addressInput').value;
+    if (!query) { setStatus("Error: Field cannot run empty."); return; }
+    
+    const cleanQuery = query.toLowerCase().trim();
+    
+    // Check if the input starts with a house number (indicates a specific street address search)
+    const startsWithNumber = /^\d+/.test(cleanQuery);
+    
+    // Check if the input looks like a city but is missing a state identifier or comma separation
+    const isCitySearch = !startsWithNumber;
+    const missingStateAnchor = !cleanQuery.includes(",") && !cleanQuery.includes(" ") && cleanQuery.length > 2;
+
+    if (isCitySearch && missingStateAnchor) {
+        setStatus("For city searches, please include the state (e.g., Tampa, Florida)");
+        pushTelemetryLog("Search Aborted: City queries require an explicit state anchor.");
+        return;
+    }
+
+    // REMOVED ALL SC/SUMTER FORCE-LOCK BOUNDARIES - SEAMLESS GLOBAL TRACING INITIATED
+    setStatus("Scanning Global Telemetry Nodes...");
+    pushTelemetryLog(`Synchronizing unrestricted query vectors for: "${query}"`);
+    
+    fetch(`https://openstreetmap.org{encodeURIComponent(query)}&limit=1`, {
+        headers: {
+            'User-Agent': 'PersonalCommandStationForecaster/5.0 (iPad; Mobile Sandbox Engine)'
+        }
+    })
+    .then(res => {
+        if (!res.ok) throw new Error("Server communication blocked");
+        return res.json();
+    })
+    .then(data => {
+        if (data && data.length > 0) {
+            const locationRecord = data[0]; // Safely target the primary global search matrix match
+            activeLat = parseFloat(locationRecord.lat);
+            activeLon = parseFloat(locationRecord.lon);
+            
+            const labelParts = locationRecord.display_name.split(',');
+            // Extract the 3 closest descriptive structural layers (House, Street, Town/City)
+            const displayTitle = labelParts.slice(0, 3).join(','); 
+            
+            document.getElementById('stationHeaderDisplay').innerText = `Station Profile: ${displayTitle}`;
+            setStatus("Location verified successfully.");
+            pushTelemetryLog(`Global array resolved: ${activeLat.toFixed(2)}, ${activeLon.toFixed(2)}`);
+            
+            // Re-fire interactive weather maps and dynamic forecasting matrices instantly
+            syncRadarFrameDisplay();
+            if (typeof queryNationalWeatherGrid === "function") {
+                queryNationalWeatherGrid(activeLat, activeLon);
+            }
+        } else {
+            throw new Error("Target address string returned empty array");
+        }
+    })
+    .catch((err) => {
+        console.error(err);
+        setStatus("Verification failure. Check address spelling or add a town name.");
+        pushTelemetryLog("Mapping error: Address parameters unverified inside global indexes.");
+    });
 }
 
 function applyCustomTheme(theme) {
