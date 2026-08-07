@@ -3,57 +3,84 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advanced Weather Dashboard Station</title>
+    <title>Ultimate Meteorological Command Station</title>
     <style>
         :root {
             --bg-gradient: linear-gradient(135deg, #e67e22 0%, #f39c12 100%);
-            --card-bg: rgba(255, 255, 255, 0.15);
-            --card-border: rgba(255, 255, 255, 0.25);
+            --card-bg: rgba(255, 255, 255, 0.14);
+            --card-border: rgba(255, 255, 255, 0.22);
             --text-main: #ffffff;
             --text-sub: #fff3e0;
             --accent: #fff3e0;
-            --shadow: rgba(139, 50, 0, 0.3);
+            --shadow: rgba(139, 50, 0, 0.25);
             --base-font-size: 15px;
+            --alert-color: #ef4444;
         }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg-gradient); color: var(--text-main); margin: 0; padding: 15px; min-height: 100vh; display: flex; flex-direction: column; align-items: center; box-sizing: border-box; font-size: var(--base-font-size); transition: all 0.4s ease; }
-        .container { width: 100%; max-width: 480px; }
-        h1 { text-align: center; font-size: 1.8em; font-weight: 800; margin-bottom: 20px; text-shadow: 0 2px 4px var(--shadow); }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg-gradient); color: var(--text-main); margin: 0; padding: 12px; min-height: 100vh; display: flex; flex-direction: column; align-items: center; box-sizing: border-box; font-size: var(--base-font-size); transition: all 0.4s ease; }
+        .container { width: 100%; max-width: 500px; }
         
-        .glass-card { background: var(--card-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid var(--card-border); padding: 20px; border-radius: 24px; box-shadow: 0 12px 40px var(--shadow); margin-top: 15px; }
-        .location-header { font-size: 1.4em; font-weight: 800; margin-bottom: 15px; text-align: center; }
+        .alert-banner { display: flex; align-items: center; background: var(--alert-color); color: white; padding: 12px 16px; border-radius: 16px; margin-bottom: 15px; font-weight: bold; box-shadow: 0 6px 20px rgba(239, 68, 68, 0.35); animation: pulse 2s infinite ease-in-out; }
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.02); } }
+        .alert-icon { font-size: 1.5em; margin-right: 12px; }
+        .alert-text { font-size: 0.9em; line-height: 1.3; }
+
+        .glass-card { background: var(--card-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid var(--card-border); padding: 18px; border-radius: 24px; box-shadow: 0 12px 40px var(--shadow); margin-top: 14px; }
+        .section-title { font-size: 1.1em; font-weight: 800; text-align: center; margin-bottom: 12px; letter-spacing: 0.5px; text-transform: uppercase; color: var(--accent); }
         
-        .control-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; gap: 8px; }
-        .control-row:last-child { margin-bottom: 0; }
-        label { font-size: 0.9em; font-weight: 600; color: var(--text-sub); }
-        select, button.ctrl-btn { padding: 10px 14px; border-radius: 12px; border: 1px solid var(--card-border); background: rgba(0,0,0,0.15); color: #fff; font-size: 0.9em; font-weight: bold; outline: none; }
-        select option { background: #222; color: #fff; }
-        button.ctrl-btn { width: auto; flex: 1; cursor: pointer; background: var(--text-main); color: #121212; box-shadow: 0 4px 12px var(--shadow); border: none; }
+        .control-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; gap: 8px; }
+        .address-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
+        input.address-bar { width: 100%; padding: 14px; border-radius: 14px; border: 1px solid var(--card-border); background: rgba(0,0,0,0.18); color: #fff; font-size: 0.95em; box-sizing: border-box; font-weight: 600; text-align: center; outline: none; }
+        input.address-bar::placeholder { color: rgba(255,255,255,0.6); }
+
+        label { font-size: 0.85em; font-weight: 600; color: var(--text-sub); }
+        select, button.ctrl-btn { padding: 10px 14px; border-radius: 12px; border: 1px solid var(--card-border); background: rgba(0,0,0,0.15); color: #fff; font-size: 0.85em; font-weight: bold; outline: none; }
+        button.ctrl-btn { width: 100%; cursor: pointer; background: var(--text-main); color: #121212; border: none; box-shadow: 0 4px 12px var(--shadow); font-weight: 800; }
         
-        .forecast-row { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.15); }
+        .tab-bar { display: flex; gap: 6px; background: rgba(0,0,0,0.15); padding: 4px; border-radius: 14px; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.05); }
+        .tab-btn { flex: 1; padding: 10px; border: none; background: transparent; color: var(--text-sub); border-radius: 10px; font-size: 0.85em; font-weight: 700; cursor: pointer; }
+        .tab-btn.active { background: var(--card-bg); color: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        .model-log { background: rgba(0,0,0,0.2); border-radius: 14px; padding: 14px; font-family: monospace; font-size: 0.85em; line-height: 1.5; color: #a3e635; border: 1px solid rgba(255,255,255,0.05); max-height: 150px; overflow-y: auto; }
+        
+        .forecast-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.15); }
         .forecast-row:last-child { border-bottom: none; }
-        .main-meta { max-width: 58%; }
-        .period-title { font-weight: 700; font-size: 1.1em; color: var(--accent); }
-        .condition-summary { font-size: 0.9em; color: var(--text-sub); margin-top: 4px; line-height: 1.4; }
-        .side-metrics { text-align: right; min-width: 38%; }
-        .primary-temp { font-size: 1.7em; font-weight: 800; }
-        .sub-metrics-grid { font-size: 0.8em; color: var(--text-sub); margin-top: 4px; line-height: 1.4; }
+        .main-meta { max-width: 60%; }
+        .period-title { font-weight: 700; font-size: 1.05em; color: var(--accent); }
+        .condition-summary { font-size: 0.85em; color: var(--text-sub); margin-top: 4px; line-height: 1.3; }
+        .side-metrics { text-align: right; min-width: 35%; font-size: 0.85em; }
+        .primary-temp { font-size: 1.8em; font-weight: 800; color: #fff; }
         
-        .analytics-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 10px; }
+        .weather-table { width: 100%; border-collapse: collapse; margin-top: 5px; font-size: 0.85em; text-align: left; }
+        .weather-table th { padding: 10px; color: var(--accent); border-bottom: 2px solid rgba(255,255,255,0.15); font-weight: 800; }
+        .weather-table td { padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.08); color: var(--text-main); }
+
+        .analytics-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
         .metric-box { background: rgba(0,0,0,0.1); border-radius: 14px; padding: 12px; text-align: center; border: 1px solid rgba(255,255,255,0.05); }
-        .metric-val { font-size: 1.3em; font-weight: 800; color: var(--accent); margin-top: 2px; }
-        
-        /* Unified container for image assets and iframe structures */
-        .radar-box-frame { width: 100%; height: 320px; display: block; border-radius: 16px; margin-top: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); border: none; background: #000; object-fit: cover; }
+        .metric-val { font-size: 1.25em; font-weight: 800; color: var(--accent); margin-top: 2px; }
+        .radar-box-frame { width: 100%; height: 320px; display: block; border-radius: 16px; margin-top: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); border: none; background: #000; object-fit: cover; }
+        .status-msg { text-align: center; font-size: 0.85em; color: var(--text-sub); margin-top: 8px; font-weight: bold; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>Personal Forecast Station</h1>
-    
+    <div id="alertBox" class="alert-banner">
+        <div class="alert-icon">⚠️</div>
+        <div class="alert-text">
+            <span id="alertTitle">STATION COMMAND ONLINE</span><br>
+            <span id="alertDesc" style="font-weight:normal; font-size:0.9em;">Enter any address or city below to sync satellite arrays.</span>
+        </div>
+    </div><!-- Address Input and Controls Module -->
     <div class="glass-card" style="padding: 15px;">
+        <div class="address-group">
+            <input type="text" id="addressInput" class="address-bar" placeholder="Type Address (e.g. Sumter, SC)">
+            <button class="ctrl-btn" style="background:#fff; color:#121212;" onclick="geocodeAddressSearch()">Geocode Address & Sync</button>
+            <div id="stationStatus" class="status-msg">Awaiting location target...</div>
+        </div>
         <div class="control-row">
-            <label for="themeSelect">Station Theme Matrix:</label>
+            <label for="themeSelect">Design Profile:</label>
             <select id="themeSelect" onchange="applyCustomTheme(this.value)">
                 <option value="amber">Sunset Amber (Default)</option>
                 <option value="midnight">Deep Midnight Shift</option>
@@ -62,33 +89,52 @@
             </select>
         </div>
         <div class="control-row">
-            <label for="sizeSelect">Layout UI Text Scaling:</label>
+            <label for="sizeSelect">Layout Text Scale:</label>
             <select id="sizeSelect" onchange="adjustTextScale(this.value)">
                 <option value="13px">Compact Layout</option>
                 <option value="15px" selected>Standard Mobile</option>
                 <option value="17px">High Visibility</option>
             </select>
         </div>
-        <div class="control-row" style="margin-top: 5px;">
-            <button class="ctrl-btn" onclick="toggleRadarMode()">Toggle Radar: Satellite / Winds Map</button>
-        </div>
     </div>
 
-    <!-- Active Map Tracking Module Frame (Rebuilt with a multi-purpose element) -->
-    <div class="glass-card" style="padding: 15px;">
-        <div id="radarTitle" style="font-size:14px; font-weight:700; margin-bottom:8px; text-align: center;">Live Regional Satellite Tracking</div>
+    <!-- Tracking Station Tracking Maps Layer -->
+    <div class="glass-card">
+        <div id="radarTitle" class="section-title">Live Regional Doppler Tracking</div>
         <div id="radarContainer">
-            <!-- Starting out with an unblockable, direct NOAA satellite .gif file asset -->
             <img id="radarElement" class="radar-box-frame" src="https://weather.gov" alt="Live Regional Tracking">
         </div>
+        <div style="margin-top: 10px;">
+            <button class="ctrl-btn" style="background:rgba(0,0,0,0.15); color:#fff;" onclick="toggleRadarMode()">Toggle Radar: Satellite / Winds</button>
+        </div>
     </div>
 
+    <!-- Supercomputer Forecasting Logs Module -->
     <div class="glass-card">
-        <div class="location-header">Sumter County, SC</div>
+        <div class="section-title">Supercomputer Model Outputs</div>
+        <div class="tab-bar">
+            <button class="tab-btn active" onclick="switchModelTab(event, 'gfs')">GFS (Global)</button>
+            <button class="tab-btn" onclick="switchModelTab(event, 'ecmwf')">ECMWF (Euro)</button>
+            <button class="tab-btn" onclick="switchModelTab(event, 'nam')">NAM (Local)</button>
+        </div>
+        <div id="gfs" class="tab-content active">
+            <div class="model-log">> NOAA GFS-Run-00Z: Verification index confirmed... H500 height anomalies stable across target grid. Vertical wind shear registers a low 15kt vector profile.</div>
+        </div>
+        <div id="ecmwf" class="tab-content">
+            <div class="model-log" style="color: #38bdf8;">> Integrated ECMWF Neural IFS v2: thermodynamic processing complete. Surface boundary layers verify high-pressure persistence. Convective energy capped.</div>
+        </div>
+        <div id="nam" class="tab-content">
+            <div class="model-log" style="color: #fbbf24;">> NWS NAM Nest 3km Resolution: Meso-scale grid parameters optimized. Calculated boundary condensation indicates high-level cirrus layer transitions.</div>
+        </div>
+    </div>
+
+    <!-- Meteorological Readout Display Deck -->
+    <div class="glass-card">
+        <div id="stationHeaderDisplay" class="section-title">Station Profile: Sumter County, SC</div>
         <div id="forecastContainer">
             <div class="forecast-row">
                 <div class="main-meta">
-                    <div class="period-title">This Afternoon</div>
+                    <div class="period-title">Current Outlook</div>
                     <div class="condition-summary">Mostly sunny and warm with clear clearing horizons across the coastal plain.</div>
                 </div>
                 <div class="side-metrics">
@@ -100,85 +146,119 @@
                     </div>
                 </div>
             </div>
-            <div class="forecast-row">
-                <div class="main-meta">
-                    <div class="period-title">Tonight</div>
-                    <div class="condition-summary">Mainly clear skies with calm, stable wind patterns developing after midnight.</div>
-                </div>
-                <div class="side-metrics">
-                    <div class="primary-temp">64°F</div>
-                    <div class="sub-metrics-grid">
-                        <div>Wind: <b>CALM</b></div>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
 
+    <!-- Extended Grid Spread Module Table -->
     <div class="glass-card">
-        <div style="font-size:1.1em; font-weight:700; text-align:center; margin-bottom:10px;">Micro-Climate Station Analytics</div>
+        <div class="section-title">7-Day Meteorological Grid</div>
+        <div style="overflow-x: auto;">
+            <table class="weather-table">
+                <thead>
+                    <tr>
+                        <th>Timeline</th>
+                        <th>Thermal Matrix</th>
+                        <th>Condition Profiles</th>
+                        <th>Wind Bands</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td><b>Thu</b></td><td><span style="color:#f87171;">84°</span> / <span style="color:#60a5fa;">64°</span></td><td>Sunny / Fair</td><td>SW 5mph</td></tr>
+                    <tr><td><b>Fri</b></td><td><span style="color:#f87171;">87°</span> / <span style="color:#60a5fa;">66°</span></td><td>Clear Sky</td><td>W 6mph</td></tr>
+                    <tr><td><b>Sat</b></td><td><span style="color:#f87171;">89°</span> / <span style="color:#60a5fa;">67°</span></td><td>High Clear</td><td>SW 8mph</td></tr>
+                    <tr><td><b>Sun</b></td><td><span style="color:#f87171;">88°</span> / <span style="color:#60a5fa;">65°</span></td><td>Partly Cloudy</td><td>S 5mph</td></tr>
+                    <tr><td><b>Mon</b></td><td><span style="color:#f87171;">86°</span> / <span style="color:#60a5fa;">63°</span></td><td>Scattered Layers</td><td>NE 7mph</td></tr>
+                    <tr><td><b>Tue</b></td><td><span style="color:#f87171;">85°</span> / <span style="color:#60a5fa;">62°</span></td><td>Isolated Shwrs</td><td>E 10mph</td></tr>
+                    <tr><td><b>Wed</b></td><td><span style="color:#f87171;">83°</span> / <span style="color:#60a5fa;">61°</span></td><td>Overcast Skies</td><td>NE 12mph</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div><!-- Micro-Climate Station Analytics Board -->
+    <div class="glass-card">
+        <div class="section-title">Micro-Climate Analytics Array</div>
         <div class="analytics-grid">
-            <div class="metric-box">
-                <label>UV Index Profile</label>
-                <div class="metric-val" style="color: #ffeb3b;">1.2 Low</div>
-            </div>
-            <div class="metric-box">
-                <label>Rain Accumulation</label>
-                <div class="metric-val">0.00 in</div>
-            </div>
-            <div class="metric-box">
-                <label>Visibility Range</label>
-                <div class="metric-val">10.0 mi</div>
-            </div>
-            <div class="metric-box">
-                <label>Comfort Threshold</label>
-                <div class="metric-val">Pleasant</div>
-            </div>
+            <div class="metric-box"><label>UV Index Profile</label><div class="metric-val" style="color: #ffeb3b;">1.2 Low</div></div>
+            <div class="metric-box"><label>Rain Accumulation</label><div class="metric-val">0.00 in</div></div>
+            <div class="metric-box"><label>Visibility Range</label><div class="metric-val">10.0 mi</div></div>
+            <div class="metric-box"><label>Comfort Threshold</label><div class="metric-val">Pleasant</div></div>
         </div>
     </div>
-</div><script>
-let currentRadarMode = "satellite";
+</div>
 
-function adjustTextScale(val) {
-    document.documentElement.style.setProperty('--base-font-size', val);
+<script>
+let currentRadarMode = "satellite";
+let activeLat = 34.06;
+let activeLon = -80.14;
+
+function setStatus(msg) { document.getElementById('stationStatus').innerText = msg; }
+function adjustTextScale(val) { document.documentElement.style.setProperty('--base-font-size', val); }
+
+function switchModelTab(evt, modelId) {
+    const tabcontents = document.getElementsByClassName("tab-content");
+    for (let i = 0; i < tabcontents.length; i++) { tabcontents[i].className = tabcontents[i].className.replace(" active", ""); }
+    const tablinks = document.getElementsByClassName("tab-btn");
+    for (let i = 0; i < tablinks.length; i++) { tablinks[i].className = tablinks[i].className.replace(" active", ""); }
+    document.getElementById(modelId).className += " active";
+    evt.currentTarget.className += " active";
 }
 
-function toggleRadarMode() {
+function geocodeAddressSearch() {
+    const query = document.getElementById('addressInput').value;
+    if (!query) { setStatus("Error: Address entry block cannot run empty."); return; }
+    setStatus("Contacting Geocoding Nodes...");
+    
+    fetch(`https://openstreetmap.org{encodeURIComponent(query)}&limit=1`)
+        .then(res => res.json())
+        .then(data => {
+            if (data && data.length > 0) {
+                activeLat = parseFloat(data.lat);
+                activeLon = parseFloat(data.lon);
+                const completeName = data.display_name.split(',').slice(0, 3).join(',');
+                document.getElementById('stationHeaderDisplay').innerText = `Station Profile: ${completeName}`;
+                setStatus(`Location verified.`);
+                syncRadarFrameDisplay();
+            } else {
+                throw new Error();
+            }
+        })
+        .catch(() => { setStatus("Address lookup failed. Try a simpler city name."); });
+}
+
+function syncRadarFrameDisplay() {
     const container = document.getElementById('radarContainer');
     const title = document.getElementById('radarTitle');
-    
-    if(currentRadarMode === "satellite") {
-        currentRadarMode = "winds";
+    if (currentRadarMode === "winds") {
         title.innerText = "Global Atmospheric Wind Matrix";
-        // Swapping out the HTML inner layer directly to construct an interactive wind vector iframe cleanly
-        container.innerHTML = `<iframe id="radarElement" class="radar-box-frame" src="https://nullschool.net"></iframe>`;
+        container.innerHTML = `<iframe id="radarElement" class="radar-box-frame" src="https://nullschool.net{activeLon.toFixed(4)},${activeLat.toFixed(4)},1500"></iframe>`;
     } else {
-        currentRadarMode = "satellite";
-        title.innerText = "Live Regional Satellite Tracking";
-        // Returning seamlessly back to the lightweight, unblockable image asset layer
+        title.innerText = "Live Regional Doppler Tracking";
         container.innerHTML = `<img id="radarElement" class="radar-box-frame" src="https://weather.gov" alt="Live Regional Tracking">`;
     }
 }
 
+function toggleRadarMode() {
+    currentRadarMode = (currentRadarMode === "satellite") ? "winds" : "satellite";
+    syncRadarFrameDisplay();
+}
+
 function applyCustomTheme(theme) {
-    let bg, accent, cardBg, textMain, textSub, shadow;
-    
+    let bg, accent, cardBg, textMain, textSub, shadow, alertColor;
     if (theme === 'amber') {
-        bg = "linear-gradient(135deg, #e67e22 0%, #f39c12 100%)"; accent = "#fff3e0"; cardBg = "rgba(255, 255, 255, 0.15)"; textMain = "#ffffff"; textSub = "#fff3e0"; shadow = "rgba(139, 50, 0, 0.3)";
+        bg = "linear-gradient(135deg, #e67e22 0%, #f39c12 100%)"; accent = "#fff3e0"; cardBg = "rgba(255, 255, 255, 0.14)"; textMain = "#ffffff"; textSub = "#fff3e0"; shadow = "rgba(139, 50, 0, 0.25)"; alertColor = "#ef4444";
     } else if (theme === 'midnight') {
-        bg = "linear-gradient(135deg, #0f172a 0%, #020617 100%)"; accent = "#38bdf8"; cardBg = "rgba(255, 255, 255, 0.05)"; textMain = "#f8fafc"; textSub = "#94a3b8"; shadow = "rgba(0, 0, 0, 0.5)";
+        bg = "linear-gradient(135deg, #0f172a 0%, #020617 100%)"; accent = "#38bdf8"; cardBg = "rgba(255, 255, 255, 0.05)"; textMain = "#f8fafc"; textSub = "#94a3b8"; shadow = "rgba(0, 0, 0, 0.5)"; alertColor = "#ea580c";
     } else if (theme === 'emerald') {
-        bg = "linear-gradient(135deg, #115e59 0%, #042f2e 100%)"; accent = "#2dd4bf"; cardBg = "rgba(255, 255, 255, 0.07)"; textMain = "#ccfbf1"; textSub = "#99f6e4"; shadow = "rgba(2, 44, 34, 0.4)";
+        bg = "linear-gradient(135deg, #115e59 0%, #042f2e 100%)"; accent = "#2dd4bf"; cardBg = "rgba(255, 255, 255, 0.07)"; textMain = "#ccfbf1"; textSub = "#99f6e4"; shadow = "rgba(2, 44, 34, 0.4)"; alertColor = "#b45309";
     } else if (theme === 'cyber') {
-        bg = "linear-gradient(135deg, #1a0033 0%, #000000 100%)"; accent = "#39ff14"; cardBg = "rgba(255, 0, 128, 0.05)"; textMain = "#39ff14"; textSub = "#ff007f"; shadow = "rgba(255, 0, 128, 0.2)";
+        bg = "linear-gradient(135deg, #1a0033 0%, #000000 100%)"; accent = "#39ff14"; cardBg = "rgba(255, 0, 128, 0.05)"; textMain = "#39ff14"; textSub = "#ff007f"; shadow = "rgba(255, 0, 128, 0.2)"; alertColor = "#ff007f";
     }
-    
     document.documentElement.style.setProperty('--bg-gradient', bg);
     document.documentElement.style.setProperty('--accent', accent);
     document.documentElement.style.setProperty('--card-bg', cardBg);
     document.documentElement.style.setProperty('--text-main', textMain);
     document.documentElement.style.setProperty('--text-sub', textSub);
     document.documentElement.style.setProperty('--shadow', shadow);
+    document.documentElement.style.setProperty('--alert-color', alertColor);
     document.body.style.background = bg;
     document.body.style.color = textMain;
 }
