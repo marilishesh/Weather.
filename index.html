@@ -239,14 +239,14 @@ function toggleRadarMode() {
 }
     // Add this line inside the data check section of geocodeAddressSearch()
 queryNationalWeatherGrid(activeLat, activeLon);
-
-
 document.addEventListener("DOMContentLoaded", () => {
     syncRadarFrameDisplay();
     setInterval(() => {
         const now = new Date();
         document.getElementById('stationClock').innerText = `STATION LOCK: ${now.toLocaleDateString([],{month:'short',day:'numeric'})} @ ${now.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',second:'2-digit'})}`;
     }, 1000);
+});
+    
 });
 function queryNationalWeatherGrid(lat, lon) {
     // Queries the live US Federal Weather database for your exact latitude and longitude coordinates
@@ -1247,3 +1247,35 @@ function computeCustomUserForecast() {
 }
 </script>
 <!-- ==================== END OF APPENDIX EXTENSION PACKAGE ==================== -->
+<!-- ==================== APPENDIX: STANDALONE LIVE WEATHER AUTO-REFRESH MATRIX ==================== -->
+<script>
+(function() {
+    // Highly resilient intervals that run entirely in the background without rewriting your other scripts
+    function initializeAutoUpdateEngine() {
+        // Silently queries the National Weather Service variables every 15 minutes (900000 ms)
+        setInterval(() => {
+            if (typeof queryNationalWeatherGrid === "function" && typeof activeLat !== "undefined" && typeof activeLon !== "undefined") {
+                queryNationalWeatherGrid(activeLat, activeLon);
+                
+                // Intelligently hooks into your console activity logger to confirm update deployment
+                if (typeof pushTelemetryLog === "function") {
+                    pushTelemetryLog("Background Auto-Refresh: Real-time humidity, temperature, and wind streams synchronized.");
+                }
+                
+                // Forces your active radar window frames to smoothly reload fresh reflectivity files
+                if (typeof syncRadarFrameDisplay === "function") {
+                    syncRadarFrameDisplay();
+                }
+            }
+        }, 900000);
+    }
+
+    // Delayed bootstrap execution ensuring all core interface nodes have compiled into the mobile Safari sandbox
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", initializeAutoUpdateEngine);
+    } else {
+        initializeAutoUpdateEngine();
+    }
+})();
+</script>
+<!-- ==================== END OF LIVE WEATHER AUTO-REFRESH MATRIX ==================== -->
