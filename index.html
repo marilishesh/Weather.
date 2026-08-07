@@ -214,24 +214,48 @@ function switchSubModelTab(evt, subId) {
 function geocodeAddressSearch() {
     const query = document.getElementById('addressInput').value;
     if (!query) { setStatus("Error: Field cannot run empty."); return; }
+    
     setStatus("Contacting Backup Geocoding Infrastructure...");
     pushTelemetryLog(`Synchronizing search vectors for: "${query}"`);
     
-    fetch(`https://maps.co{encodeURIComponent(query)}`)
-        .then(res => res.json())
-        .then(data => {
-            if (data && data.length > 0) {
-                activeLat = parseFloat(data[0].lat); 
-                activeLon = parseFloat(data[0].lon);
-                const nameParts = data[0].display_name.split(',');
-                document.getElementById('stationHeaderDisplay').innerText = `Station Profile: ${nameParts[0]}, ${nameParts[1] || ''}`;
-                setStatus("Location verified successfully."); 
-                pushTelemetryLog(`Coordinates resolved: ${activeLat.toFixed(2)}, ${activeLon.toFixed(2)}`); 
-                syncRadarFrameDisplay();
-            } else { throw new Error(); }
-        }).catch(() => { setStatus("Lookup failed. Check spelling."); });
+    // Added specific routing headers to bypass the API server block
+    fetch(`https://maps.co{encodeURIComponent(query)}`, {
+        headers: {
+            'Accept': 'application/json',
+            'User-Agent': 'WeatherDashboardStation/4.0'
+        }
+    })
+    .then(res => {
+        if (!res.ok) throw new Error("Server response blocked");
+        return res.json();
+    })
+    .then(data => {
+        if (data && data.length > 0) {
+            // Target the first validated geocoded location item array entry
+            const targetLoc = data[0]; 
+            activeLat = parseFloat(targetLoc.lat); 
+            activeLon = parseFloat(targetLoc.lon);
+            
+            // Extract the location label fields cleanly
+            const nameParts = targetLoc.display_name.split(',');
+            const clearTitle = nameParts[0] + (nameParts[1] ? ',' + nameParts[1] : '');
+            
+            document.getElementById('stationHeaderDisplay').innerText = `Station Profile: ${clearTitle}`;
+            setStatus("Location verified successfully."); 
+            pushTelemetryLog(`Coordinates resolved: ${activeLat.toFixed(2)}, ${activeLon.toFixed(2)}`); 
+            
+            // Re-initialize map frame arrays instantly
+            syncRadarFrameDisplay();
+        } else { 
+            throw new Error("Empty data matrix array returned"); 
+        }
+    })
+    .catch((err) => { 
+        console.error(err);
+        setStatus("Lookup failed. Check spelling."); 
+    });
 }
-
+    
 function syncRadarFrameDisplay() {
     const container = document.getElementById('radarContainer');
     if (!container) return;
